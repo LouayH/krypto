@@ -8,3 +8,6 @@
 
 `npm install -D tailwindcss postcss autoprefixer`
 `npx tailwindcss init -p`
+
+### Install react-icons
+`npm install react-icons`
