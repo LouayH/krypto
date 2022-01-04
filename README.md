@@ -19,3 +19,6 @@
 
 ### Config hardhat with network
 `npm install dotenv`
+
+### Create Transactions contract and deploy it
+`npx hardhat run scripts/deploy.js --network ropsten`
