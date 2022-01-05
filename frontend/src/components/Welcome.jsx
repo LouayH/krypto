@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 import { Loader } from "./";
+import { TransactionContext } from "../context/tranactions";
 
 const InputField = ({ type, name, placeholder, value, handleChange }) => (
   <input type={type} placeholder={placeholder} step="0.0001" value={value} onChange={(e) => handleChange(e, name)}
@@ -11,12 +12,9 @@ const InputField = ({ type, name, placeholder, value, handleChange }) => (
 
 const Welcome = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { connectedAccount, connectWallet } = useContext(TransactionContext);
 
   const gridItemStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-dashed border-gray-400 font-light text-white";
-  
-  const connectWallet = () => {
-
-  }
 
   const handleSubmit = () => {
     setIsLoading(true);
@@ -32,10 +30,12 @@ const Welcome = () => {
           <p className="text-left mt-5 text-white font-light w-11/12 md:w-9/12 text-base">
             Explore crypto world! Buy and sell crypto currencies easily on Krypto.
           </p>
-          <button type="button" onClick={connectWallet}
-            className="flex flex-row justify-center items-center my-5 bg-[#2952E3] p-3 rounded-full cursor-pointer hover:bg-[#2546BD]">
-            <p className="text-base text-white font-semibold">Connect Wallet</p>
-          </button>
+          {!connectedAccount && (
+            <button type="button" onClick={connectWallet}
+              className="flex flex-row justify-center items-center my-5 bg-[#2952E3] p-3 rounded-full cursor-pointer hover:bg-[#2546BD]">
+              <p className="text-base text-white font-semibold">Connect Wallet</p>
+            </button>
+          )}
           <div className="overflow-hidden grid grid-cols-2 sm:grid-cols-3 w-full mt-10 rounded-2xl gap-1">
             <div className={gridItemStyles}>
               Reliability
