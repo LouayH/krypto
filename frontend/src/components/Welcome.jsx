@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 import { Loader } from "./";
@@ -11,13 +11,18 @@ const InputField = ({ type, name, placeholder, value, handleChange }) => (
 );
 
 const Welcome = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { connectedAccount, connectWallet } = useContext(TransactionContext);
+  const { connectedAccount, connectWallet, formData, updateFormData, isLoading, setIsLoading, sendTransaction } = useContext(TransactionContext);
 
   const gridItemStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-dashed border-gray-400 font-light text-white";
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const { addressTo, amount, message } = formData;
+    if(!addressTo || !amount || !message) return;
+
     setIsLoading(true);
+    sendTransaction();
   }
 
   return (
@@ -77,9 +82,9 @@ const Welcome = () => {
             </div>
           </div>
           <div className="flex flex-col justify-start items-center w-full sm:w-96 p-5 blue-glassmorphism">
-            <InputField type="text" name="addressTo" placeholder="Address To" handleChange={() => {}} />
-            <InputField type="number" name="amount" placeholder="Amount (ETH)" handleChange={() => {}} />
-            <InputField type="text" name="message" placeholder="Enter message" handleChange={() => {}} />
+            <InputField type="text" name="addressTo" placeholder="Address To" handleChange={updateFormData} />
+            <InputField type="number" name="amount" placeholder="Amount (ETH)" handleChange={updateFormData} />
+            <InputField type="text" name="message" placeholder="Enter message" handleChange={updateFormData} />
 
             {isLoading ? (
               <Loader />

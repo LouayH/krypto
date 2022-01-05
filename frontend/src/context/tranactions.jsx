@@ -16,6 +16,12 @@ const getEthereumContract = () => {
 
 export const TransactionProvider = ({ children }) => {
   const [connectedAccount, setConnectedAccount] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({ addressTo: "", amount: "", message: "" });
+
+  const updateFormData = (e, input) => {
+    setFormData((prev) => ({ ...prev, [input]: e.target.value }))
+  }
   
   const connectWallet = async () => {
     try {
@@ -26,7 +32,7 @@ export const TransactionProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
 
-      throw new error("No ethereum object");
+      throw new Error("No ethereum object");
     }
   }
   
@@ -43,7 +49,39 @@ export const TransactionProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
 
-      throw new error("No ethereum object");
+      throw new Error("No ethereum object");
+    }
+  }
+
+  const sendTransaction = async () => {
+    try {
+      setIsLoading(true);
+      if(!ethereum) return alert("Please install MetaMask!");
+
+      const { addressTo, amount, message } = formData;
+      const parsedAmount = ethers.utils.parseEther(amount);
+      const contract = getEthereumContract();
+
+      await ethereum.request({
+        method: "eth_sendTransaction",
+        params: [{
+          from: connectedAccount,
+          to: addressTo,
+          gas: "0x5208", // 21000 GWEI in decimal
+          value: parsedAmount._hex
+        }]
+      });
+
+      const trasnaction = await contract.send(addressTo, parsedAmount, message);
+      console.log(`Loading - ${trasnaction.hash}`);
+      await trasnaction.wait();
+      setIsLoading(false);
+      console.log(`Success - ${trasnaction.hash}`);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+
+      throw new Error("No ethereum object");
     }
   }
 
@@ -52,7 +90,7 @@ export const TransactionProvider = ({ children }) => {
   }, []);
 
   return (
-    <TransactionContext.Provider value={{ connectedAccount, connectWallet }}>
+    <TransactionContext.Provider value={{ connectedAccount, connectWallet, formData, updateFormData, isLoading, setIsLoading, sendTransaction }}>
       { children }
     </TransactionContext.Provider>
   )
