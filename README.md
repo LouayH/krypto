@@ -22,3 +22,6 @@
 
 ### Create Transactions contract and deploy it
 `npx hardhat run scripts/deploy.js --network ropsten`
+
+### Make contract functions available in react
+`npm install ethers`
