@@ -19,6 +19,7 @@ export const TransactionProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ addressTo: "", amount: "", message: "" });
   const [transactions, setTransactions] = useState([]);
+  const [count, setCount] = useState(0);
 
   const updateFormData = (e, input) => {
     setFormData((prev) => ({ ...prev, [input]: e.target.value }))
@@ -110,8 +111,22 @@ export const TransactionProvider = ({ children }) => {
     }
   }
 
+  const getCount = async () => {
+    try {
+      const contract = getEthereumContract();
+      const count = await contract.getCount();
+
+      setCount(count.toNumber());
+    } catch (error) {
+      console.log(error);
+
+      throw new Error("No ethereum object");
+    }
+  }
+
   useEffect(() => {
     isWalletConnected();
+    getCount();
   }, []);
 
   return (
