@@ -18,6 +18,7 @@ export const TransactionProvider = ({ children }) => {
   const [connectedAccount, setConnectedAccount] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ addressTo: "", amount: "", message: "" });
+  const [transactions, setTransactions] = useState([]);
 
   const updateFormData = (e, input) => {
     setFormData((prev) => ({ ...prev, [input]: e.target.value }))
@@ -43,6 +44,7 @@ export const TransactionProvider = ({ children }) => {
       const accounts = await ethereum.request({ method: "eth_accounts" });
       if(accounts.length) {
         setConnectedAccount(accounts[0]);
+        getAll();
       } else {
         console.log("No accounts found!");
       }
@@ -84,13 +86,36 @@ export const TransactionProvider = ({ children }) => {
       throw new Error("No ethereum object");
     }
   }
+  
+  const getAll = async () => {
+    try {
+      if(!ethereum) return alert("Please install MetaMask!");
+
+      const contract = getEthereumContract();
+      const allTransactions = await contract.getAll();
+
+      const transactions = allTransactions.map((transaction) => ({
+        addressFrom: transaction.sender,
+        addressTo: transaction.receiver,
+        amount: parseInt(transaction.amount._hex) / (10 ** 18),
+        message: transaction.message,
+        timestamp: new Date(transaction.timestamp.toNumber() * 1000).toLocaleString(),
+      }));
+
+      setTransactions(transactions);
+    } catch (error) {
+      console.log(error);
+
+      throw new Error("No ethereum object");
+    }
+  }
 
   useEffect(() => {
     isWalletConnected();
   }, []);
 
   return (
-    <TransactionContext.Provider value={{ connectedAccount, connectWallet, formData, updateFormData, isLoading, setIsLoading, sendTransaction }}>
+    <TransactionContext.Provider value={{ connectedAccount, connectWallet, formData, updateFormData, isLoading, setIsLoading, sendTransaction, transactions }}>
       { children }
     </TransactionContext.Provider>
   )

@@ -1,10 +1,9 @@
 import { useContext } from "react";
 import { TransactionContext } from "../context/tranactions";
-import transactions from "../utils/transactions";
 import { shortenAddress } from "../utils/helpers";
 
 const Transactions = () => {
-  const { connectedAccount } = useContext(TransactionContext);
+  const { connectedAccount, transactions } = useContext(TransactionContext);
 
   const TransactionCard = ({ addressFrom, addressTo, amount, message, timestamp }) => (
     <div className="flex-1 flex flex-col m-4 bg-[#181918] p-3
@@ -56,7 +55,7 @@ const Transactions = () => {
       )}
 
         <div className="flex flex-wrap justify-center items-center mt-10">
-        {transactions.reverse().map((transaction) => <TransactionCard key={transaction.id} {...transaction} />)}
+        {transactions.reverse().map((transaction, i) => <TransactionCard key={i} {...transaction} />)}
         </div>
       </div>
     </div>
