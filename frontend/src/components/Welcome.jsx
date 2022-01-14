@@ -3,6 +3,7 @@ import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 import { Loader } from "./";
 import { TransactionContext } from "../context/tranactions";
+import { shortenAddress } from "../utils/helpers";
 
 const InputField = ({ type, name, placeholder, value, handleChange }) => (
   <input type={type} placeholder={placeholder} step="0.0001" value={value} onChange={(e) => handleChange(e, name)}
@@ -73,7 +74,7 @@ const Welcome = () => {
               </div>
               <div>
                 <p className="text-white font-light text-sm">
-                  0x1234567890
+                  {connectedAccount && shortenAddress(connectedAccount)}
                 </p>
                 <p className="text-white font-semibold text-lg mt-1">
                   Ethereum
