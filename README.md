@@ -1,5 +1,7 @@
 # Krypto - Web 3 Application
 
+![KRYPTO](/screenshot.png)
+
 ### Initialize react application via vite
 
 `npm init vite@latest`
